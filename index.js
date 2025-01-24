@@ -41,6 +41,22 @@ app.get('/api/counter', (req, res) => {
   });
 });
 
+app.get('/api/reset', (req, res) => {
+  //reset the counter 
+  fs.readFile(counterFile, 'utf-8', (err, data) => {
+    if (err) return res.status(500).send('Error reading counter file.');
+
+    const counter = JSON.parse(data);
+    counter.count = 0;
+
+    fs.writeFile(counterFile, JSON.stringify(counter, null, 2), (err) => {
+      if (err) return res.status(500).send('Error updating counter file.');
+      res.status(200).send({ message: 'Counter incremented.', count: counter.count });
+    });
+  });
+})
+
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
